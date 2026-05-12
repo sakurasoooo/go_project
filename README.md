@@ -31,6 +31,9 @@ a single-IP target is also supported.
 # build
 go build -o survey ./cmd/survey
 
+# optional: HTTP JSON API for the React UI in web/
+./survey serve --addr :8080
+
 # scan a small subnet on the default mDNS port
 ./survey --cidr 192.168.1.0/24 --ports 5353
 
@@ -116,13 +119,15 @@ When the scan covers more than one host, each block is prefixed with
 ## Project layout
 
 ```
-cmd/survey/           CLI entrypoint (flag parsing, signal handling)
+cmd/survey/           CLI + `serve` subcommand (HTTP API)
 internal/config/      Tunables (timeouts, workers, default PTR list)
+internal/httpsrv/     REST + SSE per docs/API.md
 internal/ipgen/       CIDR / IP range / port-list parsing
 internal/model/       Host / Service in-memory model with concurrent merge
 internal/dnssd/       miekg/dns wrapper, response parser, service builder
 internal/prober/      Worker pool that drives the PTR plan per target
-internal/render/      Text renderer aligned with the task example
+internal/render/      Text / YAML renderer aligned with the task example
+web/                  Vite + React + TypeScript UI
 ```
 
 ## Tests
@@ -144,10 +149,9 @@ afoul of acceptable-use policies and local law.
 
 ## HTTP API (for the React frontend)
 
-The contract for a future HTTP layer (scan submit, progress SSE, results
-JSON) lives in [docs/API.md](docs/API.md). It is contract-first: types and
-endpoint shapes are stable enough for the frontend to start integrating
-before the Go HTTP server lands.
+Implemented in `internal/httpsrv` and exposed via `survey serve`. The contract
+is [docs/API.md](docs/API.md); the React app in [web/](web/) consumes it
+through the Vite dev proxy (`/api` → `http://127.0.0.1:8080`).
 
 ## Dependencies
 

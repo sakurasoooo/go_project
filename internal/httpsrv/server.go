@@ -151,7 +151,7 @@ func (s *Server) handlePostScan(w http.ResponseWriter, r *http.Request) {
 		writeAPIError(w, rid, http.StatusBadRequest, "INVALID_PORT_RANGE", err.Error(), "ports")
 		return
 	}
-	wk := deref(norm.Workers)
+	wk := *norm.Workers
 	if wk < 1 || wk > 4096 {
 		writeAPIError(w, rid, http.StatusBadRequest, "INVALID_PARAM", "workers must be between 1 and 4096", "workers")
 		return
@@ -232,7 +232,7 @@ func buildConfig(norm *ScanRequest, ports []uint16) *config.Config {
 		Ports:     ports,
 		UseTCP:    derefBoolPtr(norm.TCP, false),
 		Timeout:   to,
-		Workers:   deref(norm.Workers),
+		Workers:   *norm.Workers,
 		Iface:     deref(norm.Iface),
 		PTRList:   ptrBase,
 		Enumerate: derefBoolPtr(norm.Enumerate, true),
@@ -259,6 +259,7 @@ func appendUniqueStrings(dst []string, items ...string) []string {
 	return out
 }
 
+func (s *Server) runJob(j *job, ctx context.Context) {
 	select {
 	case <-ctx.Done():
 		j.mu.Lock()

@@ -396,7 +396,7 @@ CLI 与 API 共享 `internal/config.Config` 与 `internal/prober.Prober`，
 
 ## 7. 待办与下一版
 
-- [ ] HTTP server 实现 (`cmd/server/main.go`)
+- [x] HTTP server 实现（`survey serve`、`internal/httpsrv`）
 - [ ] OpenAPI 3.1 自动生成（基于本文档手工 + `swag` 注解）
 - [ ] WebSocket 备选通道（部分代理不友好 SSE 时）
 - [ ] 任务持久化（SQLite/BoltDB），支持重启恢复
