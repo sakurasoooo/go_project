@@ -106,12 +106,14 @@ func (p *Prober) Targets(ips []netip.Addr) []Target {
 }
 
 // Run executes the query plan for every target using a bounded worker pool
-// and returns the aggregated result. The context cancels in-flight queries
-// promptly so Ctrl+C does not leave the program waiting on UDP timeouts.
-// When notify is non-nil, OnProgress is invoked after each target finishes;
-// OnService / OnHost fire when new DNS-SD rows are merged (see docs/API.md).
-func (p *Prober) Run(ctx context.Context, targets []Target, notify *Notify) *model.Result {
-	res := model.NewResult()
+// and returns the aggregated result. If into is nil, a fresh Result is
+// allocated. The same pointer is returned. When notify is non-nil, callbacks
+// fire as documented in docs/API.md.
+func (p *Prober) Run(ctx context.Context, targets []Target, into *model.Result, notify *Notify) *model.Result {
+	if into == nil {
+		into = model.NewResult()
+	}
+	res := into
 	if len(targets) == 0 {
 		return res
 	}

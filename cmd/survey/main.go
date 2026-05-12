@@ -112,7 +112,7 @@ func run(args []string, stdout, stderr *os.File) error {
 	fmt.Fprintf(stderr, "[survey] %d targets across %d ips × %d ports (timeout=%s workers=%d)\n",
 		len(targets), len(ips), len(ports), cfg.Timeout, cfg.Workers)
 	start := time.Now()
-	res := p.Run(ctx, targets, nil)
+	res := p.Run(ctx, targets, nil, nil)
 	fmt.Fprintf(stderr, "[survey] scan complete in %s\n", time.Since(start).Round(time.Millisecond))
 
 	switch cfg.Format {

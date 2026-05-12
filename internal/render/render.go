@@ -62,16 +62,16 @@ func YAML(w io.Writer, res *model.Result) error {
 		}
 		for _, svc := range h.Services {
 			yd.Services = append(yd.Services, yamlServiceDoc{
-				Type:       svc.Type,
-				ShortName:  svc.ShortName,
-				Transport:  svc.Transport,
-				Port:       svc.Port,
-				Name:       svc.Name,
-				Hostname:   strings.TrimSuffix(svc.Hostname, "."),
-				IPv4:       svc.IPv4,
-				IPv6:       svc.IPv6,
-				TTL:        svc.TTL,
-				TXT:        append([]string(nil), svc.TXT...),
+				Type:      svc.Type,
+				ShortName: svc.ShortName,
+				Transport: svc.Transport,
+				Port:      svc.Port,
+				Name:      svc.Name,
+				Hostname:  strings.TrimSuffix(svc.Hostname, "."),
+				IPv4:      svc.IPv4,
+				IPv6:      svc.IPv6,
+				TTL:       svc.TTL,
+				TXT:       append([]string(nil), svc.TXT...),
 			})
 		}
 		doc.Hosts = append(doc.Hosts, yd)
@@ -89,22 +89,22 @@ type yamlDoc struct {
 }
 
 type yamlHostDoc struct {
-	Source   string            `yaml:"source"`
-	Services []yamlServiceDoc  `yaml:"services"`
-	PTRs     []string          `yaml:"ptrs"`
+	Source   string           `yaml:"source"`
+	Services []yamlServiceDoc `yaml:"services"`
+	PTRs     []string         `yaml:"ptrs"`
 }
 
 type yamlServiceDoc struct {
-	Type       string   `yaml:"type,omitempty"`
-	ShortName  string   `yaml:"shortName"`
-	Transport  string   `yaml:"transport,omitempty"`
-	Port       uint16   `yaml:"port"`
-	Name       string   `yaml:"name,omitempty"`
-	Hostname   string   `yaml:"hostname,omitempty"`
-	IPv4       string   `yaml:"ipv4,omitempty"`
-	IPv6       string   `yaml:"ipv6,omitempty"`
-	TTL        uint32   `yaml:"ttl,omitempty"`
-	TXT        []string `yaml:"txt,omitempty"`
+	Type      string   `yaml:"type,omitempty"`
+	ShortName string   `yaml:"shortName"`
+	Transport string   `yaml:"transport,omitempty"`
+	Port      uint16   `yaml:"port"`
+	Name      string   `yaml:"name,omitempty"`
+	Hostname  string   `yaml:"hostname,omitempty"`
+	IPv4      string   `yaml:"ipv4,omitempty"`
+	IPv6      string   `yaml:"ipv6,omitempty"`
+	TTL       uint32   `yaml:"ttl,omitempty"`
+	TXT       []string `yaml:"txt,omitempty"`
 }
 
 // visibleHosts drops hosts that produced no services and no PTR records.

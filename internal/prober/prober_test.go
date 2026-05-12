@@ -64,7 +64,7 @@ func TestProberMergesServicesPerSource(t *testing.T) {
 	p := NewWithQueriers(cfg, fq, nil)
 	res := p.Run(context.Background(), []Target{
 		{IP: netip.MustParseAddr("192.168.1.50"), Port: 5353, Transport: "udp"},
-	}, nil)
+	}, nil, nil)
 
 	hosts := res.Hosts()
 	if len(hosts) != 1 {
@@ -102,7 +102,7 @@ func TestProberStopsOnCanceledContext(t *testing.T) {
 	cancel()
 	res := p.Run(ctx, []Target{
 		{IP: netip.MustParseAddr("10.0.0.1"), Port: 5353, Transport: "udp"},
-	}, nil)
+	}, nil, nil)
 	if len(res.Hosts()) > 1 {
 		t.Fatalf("unexpected results when canceled")
 	}
