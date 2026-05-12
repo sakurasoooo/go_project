@@ -105,6 +105,28 @@ button:first-of-type {
   border-color: #5c6bc0;
 }
 
+.panel.note {
+  border-color: #3d4a6b;
+  background: #1e2433;
+}
+
+.panel.note h2 {
+  margin-top: 0;
+}
+
+.panel.note p {
+  margin: 0.5rem 0 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.panel.note code {
+  font-size: 0.85em;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: #12141a;
+}
+
 .err {
   margin-top: 1rem;
   padding: 0.75rem;

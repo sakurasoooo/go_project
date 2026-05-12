@@ -26,11 +26,20 @@ export default function App() {
   const [hosts, setHosts] = useState<Host[]>([])
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  /** Off by default: backend keeps one Host row per probed (ip,port) even with zero services. */
+  const [showProbedWithoutServices, setShowProbedWithoutServices] = useState(false)
 
   const progress = useMemo(() => {
     if (!summary?.targets_total) return 0
     return summary.targets_done / summary.targets_total
   }, [summary])
+
+  const hostsWithServices = useMemo(
+    () => hosts.filter((h) => (h.services?.length ?? 0) > 0),
+    [hosts],
+  )
+
+  const displayHosts = showProbedWithoutServices ? hosts : hostsWithServices
 
   const subscribeSSE = useCallback((id: string) => {
     const url = scanEventsUrl(id)
@@ -203,14 +212,47 @@ export default function App() {
           <div className="bar">
             <div className="fill" style={{ width: `${Math.round(progress * 100)}%` }} />
           </div>
+          <label className="inline" style={{ marginTop: '0.75rem' }}>
+            <input
+              type="checkbox"
+              checked={showProbedWithoutServices}
+              onChange={(e) => setShowProbedWithoutServices(e.target.checked)}
+            />{' '}
+            Show probed targets with no DNS-SD answers (noise on large subnets)
+          </label>
         </section>
       )}
 
-      {hosts.length > 0 && (
+      {summary &&
+        summary.status !== 'running' &&
+        summary.status !== 'queued' &&
+        hosts.length > 0 &&
+        hostsWithServices.length === 0 && (
+          <section className="panel note">
+            <h2>No assets in this run</h2>
+            <p>
+              题目要求的是「有 mDNS/DNS-SD 表现」的资产（示例里的 services、PTR、TXT/banner）。
+              当前扫描已完成 <strong>{summary.targets_total}</strong> 个 (IP,port) 探测，但{' '}
+              <strong>没有任何目标</strong>在指定端口上返回可解析的 DNS-SD 应答，因此与示例同级的
+              banner 行不会出现。
+            </p>
+            <p className="muted">
+              本工具是向每个地址<strong>单播</strong>发 DNS-SD 式 PTR（见 README），不是整网段多播发现；若本机不在
+              192.168.1.0/24、对端不应答单播、或仅应答多播，结果为空是正常现象。可改用本机网段、缩小范围，或对已知设备扫{' '}
+              <code>127.0.0.1/32</code> / 单 IP 做验证。
+            </p>
+          </section>
+        )}
+
+      {displayHosts.length > 0 && (
         <section className="panel">
-          <h2>Hosts ({hosts.length})</h2>
+          <h2>
+            {showProbedWithoutServices
+              ? `Probed targets (${displayHosts.length})`
+              : `Assets with DNS-SD (${displayHosts.length})`}
+          </h2>
           <div className="hosts">
-            {hosts.map((h) => (
+            {displayHosts.map((h) => (
               <article key={h.source} className="host">
                 <h3>
                   {h.source} — {h.ip}:{h.probe_port}
