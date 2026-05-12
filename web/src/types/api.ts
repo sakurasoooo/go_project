@@ -51,15 +51,17 @@ export interface Service {
   ipv4: string
   ipv6: string
   ttl: number
-  txt: string[]
+  /** May be null from JSON when empty. */
+  txt?: string[] | null
 }
 
 export interface Host {
   source: string
   ip: string
   probe_port: number
-  services: Service[]
-  ptrs: string[]
+  /** May be null when JSON from Go has a nil slice. */
+  services: Service[] | null
+  ptrs?: string[] | null
 }
 
 export interface ScanResult {

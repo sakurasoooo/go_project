@@ -216,7 +216,7 @@ export default function App() {
                   {h.source} — {h.ip}:{h.probe_port}
                 </h3>
                 <ul className="svc">
-                  {h.services.map((s, i) => (
+                  {(h.services ?? []).map((s, i) => (
                     <li key={`${s.type}-${i}`}>
                       <strong>
                         {s.port}/{s.transport} {s.short_name}
@@ -225,15 +225,15 @@ export default function App() {
                       <div className="meta">
                         hostname={s.hostname} ttl={s.ttl} ipv4={s.ipv4} ipv6={s.ipv6}
                       </div>
-                      {s.txt.length > 0 && (
-                        <pre className="txt">{s.txt.join('\n')}</pre>
+                      {(s.txt ?? []).length > 0 && (
+                        <pre className="txt">{(s.txt ?? []).join('\n')}</pre>
                       )}
                     </li>
                   ))}
                 </ul>
-                {h.ptrs.length > 0 && (
+                {(h.ptrs ?? []).length > 0 && (
                   <div className="ptrs">
-                    <span className="label">PTRs:</span> {h.ptrs.join(', ')}
+                    <span className="label">PTRs:</span> {(h.ptrs ?? []).join(', ')}
                   </div>
                 )}
               </article>
